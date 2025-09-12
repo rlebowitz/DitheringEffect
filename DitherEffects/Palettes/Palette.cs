@@ -1,17 +1,17 @@
-using PaintDotNet;
+using PaintDotNet.Imaging;
 using System.Collections.Generic;
 
 namespace Dithering.Palettes
 {
-    public class Palette(ColorBgra[] colors) : IPalette
+    public class Palette(ColorBgra32[] colors) : IPalette
     {
-        private ColorBgra[] Colors { get; set; } = colors;
-        private Dictionary<ColorBgra, ColorBgra> Cache { get; set; }
+        private ColorBgra32[] Colors { get; set; } = colors;
+        private Dictionary<ColorBgra32, ColorBgra32> Cache { get; set; }
         public void Clear()
         {
             Cache.Clear();
         }
-        public ColorBgra FindClosestColor(ColorBgra color)
+        public ColorBgra32 FindClosestColor(ColorBgra32 color)
         {
             if (Cache.TryGetValue(color, out var cachedColor))
             {
@@ -32,7 +32,7 @@ namespace Dithering.Palettes
             return Colors[index];
         }
 
-        public static int SquaredDistanceTo(ColorBgra colorA, ColorBgra colorB)
+        public static int SquaredDistanceTo(ColorBgra32 colorA, ColorBgra32 colorB)
         {
             var Gdiff = colorA.G - colorB.G;
             var Bdiff = colorA.B - colorB.B;

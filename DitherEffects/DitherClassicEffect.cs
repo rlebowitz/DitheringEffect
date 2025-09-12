@@ -13,18 +13,18 @@ using System.Runtime.Versioning;
 using CheckboxControl = System.Boolean;
 using ListBoxControl = System.Byte;
 
-[assembly: AssemblyTitle("DitherClassicEffect plugin for Paint.NET")]
-[assembly: AssemblyDescription("DitherClassicEffect selected pixels")]
-[assembly: AssemblyConfiguration("ditherclassiceffect")]
-[assembly: AssemblyCompany("Robert J Lebowitz")]
-[assembly: AssemblyProduct("DitherClassicEffect")]
-[assembly: AssemblyCopyright("Copyright ©2025 by Robert J Lebowitz")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: ComVisible(false)]
-[assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyMetadata("BuiltByCodeLab", "Version=6.13.9087.35650")]
-[assembly: SupportedOSPlatform("Windows")]
+//[assembly: AssemblyTitle("DitherClassicEffect plugin for Paint.NET")]
+//[assembly: AssemblyDescription("DitherClassicEffect selected pixels")]
+//[assembly: AssemblyConfiguration("ditherclassiceffect")]
+//[assembly: AssemblyCompany("Robert J Lebowitz")]
+//[assembly: AssemblyProduct("DitherClassicEffect")]
+//[assembly: AssemblyCopyright("Copyright ©2025 by Robert J Lebowitz")]
+//[assembly: AssemblyTrademark("")]
+//[assembly: AssemblyCulture("")]
+//[assembly: ComVisible(false)]
+//[assembly: AssemblyVersion("1.0.*")]
+//[assembly: AssemblyMetadata("BuiltByCodeLab", "Version=6.13.9087.35650")]
+//[assembly: SupportedOSPlatform("Windows")]
 
 namespace Dithering
 {
@@ -219,7 +219,7 @@ namespace Dithering
                     ColorBgra current = WorkSurface[x, y];
                     // apply a dither algorithm to this pixel
                     // assuming it wasn't done before
-                    dither?.Diffuse(WorkSurface, current, x, y, rect);
+                   // dither?.Diffuse(WorkSurface, current, x, y, rect);
                 }
             }
         }

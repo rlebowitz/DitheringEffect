@@ -1,24 +1,24 @@
 ﻿using PaintDotNet;
-
+using PaintDotNet.Imaging;
 namespace Dithering.Palettes
 {
     public class Windows16Palette() : Palette([
-                    ColorBgra.Black,
-                    ColorBgra.Maroon,
-                    ColorBgra.Green,
-                    ColorBgra.Olive,
-                    ColorBgra.Navy,
-                    ColorBgra.Purple,
-                    ColorBgra.Teal,
-                    ColorBgra.Silver,
-                    ColorBgra.Gray,
-                    ColorBgra.Red,
-                    ColorBgra.Lime,
-                    ColorBgra.Yellow,
-                    ColorBgra.Blue,
-                    ColorBgra.Fuchsia,
-                    ColorBgra.Aqua,
-                    ColorBgra.White
+                    SrgbColors.Black,
+                    SrgbColors.Maroon,
+                    SrgbColors.Green,
+                    SrgbColors.Olive,
+                    SrgbColors.Navy,
+                    SrgbColors.Purple,
+                    SrgbColors.Teal,
+                    SrgbColors.Silver,
+                    SrgbColors.Gray,
+                    SrgbColors.Red,
+                    SrgbColors.Lime,
+                    SrgbColors.Yellow,
+                    SrgbColors.Blue,
+                    SrgbColors.Fuchsia,
+                    SrgbColors.Aqua,
+                    SrgbColors.White
                 ])
     {
     }

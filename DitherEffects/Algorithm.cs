@@ -1,18 +1,10 @@
 namespace Dithering
 {
-    public class Algorithm
+    public class Algorithm(double[,] matrix, int matrixOffset)
     {
-        public double[,] Matrix { get; private set; }
-        public int MatrixOffset { get; private set; }
-        public int MatrixWidth { get; private set; }
-        public int MatrixHeight { get; private set; }
-
-        public Algorithm(double[,] matrix, int matrixOffset)
-        {
-            Matrix = matrix;
-            MatrixOffset = matrixOffset;
-            MatrixWidth = matrix.GetLength(1);
-            MatrixHeight = matrix.GetLength(0);
-        }
+        public double[,] Matrix { get; private set; } = matrix;
+        public int MatrixOffset { get; private set; } = matrixOffset;
+        public int MatrixWidth { get; private set; } = matrix.GetLength(1);
+        public int MatrixHeight { get; private set; } = matrix.GetLength(0);
     }
 }

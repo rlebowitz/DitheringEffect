@@ -7,7 +7,8 @@
  */
 
 using PaintDotNet;
-using System.Drawing;
+using PaintDotNet.Imaging;
+using PaintDotNet.Rendering;
 
 namespace Dithering.Algorithms
 {
@@ -15,9 +16,9 @@ namespace Dithering.Algorithms
     {
         #region Methods
 
-        void Diffuse(Surface data, ColorBgra original, int x, int y, Rectangle rect);
+        public void Diffuse(RegionPtr<ColorBgra32> data, ColorBgra32 original, ColorBgra32 transformed, int x, int y, RectInt32 bounds);
 
-        bool PreScan { get; }
+        public bool PreScan { get; }
 
         #endregion
     }

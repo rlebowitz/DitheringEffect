@@ -6,10 +6,10 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
-using Dithering;
 using PaintDotNet;
+using PaintDotNet.Imaging;
+using PaintDotNet.Rendering;
 using System;
-using System.Drawing;
 
 namespace Dithering.Algorithms
 {
@@ -65,16 +65,15 @@ namespace Dithering.Algorithms
 
         #region IErrorDiffusion Interface
 
-        bool IErrorDiffusion.PreScan => false;
+        public bool PreScan => false;
 
-        void IErrorDiffusion.Diffuse(Surface data, ColorBgra original, int x, int y, Rectangle rect)
+        public void Diffuse(RegionPtr<ColorBgra32> data, ColorBgra32 original, ColorBgra32 transformed, int x, int y, RectInt32 bounds)
         {
-            int redError = original.R;
-            int greenError = original.G;
-            int blueError = original.B;
-            int width = rect.Right;
-            int height = rect.Bottom;
-
+            int redError = original.R - transformed.R;
+            int greenError = original.G - transformed.G;
+            int blueError = original.B - transformed.B;
+            int width = bounds.Width;
+            int height = bounds.Height;
             for (int row = 0; row < _matrixHeight; row++)
             {
                 
@@ -86,7 +85,7 @@ namespace Dithering.Algorithms
 
                     if (coefficient != 0 && offsetX > 0 && offsetX < width && offsetY > 0 && offsetY < height)
                     {
-                        ColorBgra offsetPixel = data[offsetX, offsetY];
+                        ColorBgra32 offsetPixel = data[offsetX, offsetY];
 
                         // if the UseShifting property is set, then bit shift the values by the specified
                         // divisor as this is faster than integer division. Otherwise, use integer division
@@ -111,7 +110,7 @@ namespace Dithering.Algorithms
                         byte g = (offsetPixel.G + newG).ToByte();
                         byte b = (offsetPixel.B + newB).ToByte();
 
-                        data[offsetX,offsetY] = ColorBgra.FromBgra(b, g, r, offsetPixel.A);
+                        data[offsetX,offsetY] = ColorBgra32.FromBgra(b, g, r, offsetPixel.A);
                     }
                 }
             }

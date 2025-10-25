@@ -13,11 +13,11 @@ using System.Runtime.Versioning;
 using CheckboxControl = System.Boolean;
 using ListBoxControl = System.Byte;
 
-//[assembly: AssemblyTitle("DitherClassicEffect plugin for Paint.NET")]
-//[assembly: AssemblyDescription("DitherClassicEffect selected pixels")]
-//[assembly: AssemblyConfiguration("ditherclassiceffect")]
+//[assembly: AssemblyTitle("DitherEffect plugin for Paint.NET")]
+//[assembly: AssemblyDescription("DitherEffect selected pixels")]
+//[assembly: AssemblyConfiguration("dithereffect")]
 //[assembly: AssemblyCompany("Robert J Lebowitz")]
-//[assembly: AssemblyProduct("DitherClassicEffect")]
+//[assembly: AssemblyProduct("DitherEffect")]
 //[assembly: AssemblyCopyright("Copyright ©2025 by Robert J Lebowitz")]
 //[assembly: AssemblyTrademark("")]
 //[assembly: AssemblyCulture("")]
@@ -28,7 +28,7 @@ using ListBoxControl = System.Byte;
 
 namespace Dithering
 {
-    public class DitherClassicEffectSupportInfo : IPluginSupportInfo
+    public class DitherEffectSupportInfo : IPluginSupportInfo
     {
         public string Author => GetType().Assembly.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
         public string Copyright => GetType().Assembly.GetCustomAttribute<AssemblyDescriptionAttribute>().Description;
@@ -37,10 +37,10 @@ namespace Dithering
         public Uri WebsiteUri => new Uri("http://github.com/rjlebow");
     }
 
-    [PluginSupportInfo<DitherClassicEffectSupportInfo>(DisplayName = "DitherClassicEffect")]
-    public partial class DitherClassicEffectEffectPlugin : PropertyBasedEffect
+    [PluginSupportInfo<DitherEffectSupportInfo>(DisplayName = "DitherEffect")]
+    public partial class DitherEffectPlugin : PropertyBasedEffect
     {
-        public static string StaticName => "DitherClassicEffect";
+        public static string StaticName => "DitherEffect";
         public static Image StaticIcon => null;
         public static string SubmenuName => SubmenuNames.Photo;
         private PdnRegion SelectionRegion { get; set; } = null;
@@ -49,7 +49,7 @@ namespace Dithering
         private Surface WorkSurface { get; set; } = null;
         private ColorBgra NullColor = ColorBgra.FromBgr(0, 0, byte.MaxValue);
 
-        public DitherClassicEffectEffectPlugin()
+        public DitherEffectPlugin()
 #pragma warning disable CS0618 // Type or member is obsolete
             : base(StaticName, StaticIcon, SubmenuName, new EffectOptions { Flags = EffectFlags.Configurable })
 #pragma warning restore CS0618 // Type or member is obsolete

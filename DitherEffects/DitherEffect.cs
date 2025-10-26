@@ -49,7 +49,8 @@ namespace Dithering
             : base(StaticName, StaticIcon, SubmenuName, BitmapEffectOptionsFactory.Create() with { IsConfigurable = true })
         {
         }
-
+        private ErrorDiffusionDithering? ChosenAlgorithm { get; set; }
+        private Palette? ChosenPalette { get; set; }
         public enum PropertyNames
         {
             Algorithm,
@@ -133,6 +134,9 @@ namespace Dithering
         {
             Algorithm = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.Algorithm).Value;
             PaletteType = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.PaletteType).Value;
+            ChosenAlgorithm = DitheringCollection.Ditherings[Algorithm];
+            ChosenPalette = PaletteCollection.Palettes[PaletteType];
+            ChosenPalette.Clear();
 
             base.OnSetToken(newToken);
         }
@@ -157,25 +161,16 @@ namespace Dithering
 
         protected override void OnRender(IBitmapEffectOutput output)
         {
-            var algorithm = DitheringCollection.Ditherings[Algorithm];
-            var palette = PaletteCollection.Palettes[PaletteType];
-            palette.Clear();
 
             using IEffectInputBitmap<ColorBgra32> sourceBitmap = Environment.GetSourceBitmapBgra32();
-            using IBitmapLock<ColorBgra32> sourceLock = sourceBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size));
+            using IBitmapLock<ColorBgra32> sourceLock = Environment.GetSourceBitmapBgra32().Lock(new RectInt32(0, 0, sourceBitmap.Size));
             RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
-
-            IImagingFactory factory = Services.GetService<IImagingFactory>();  // don't use Dispose on services
-            IBitmap<ColorBgra32> workBitmap = factory.CreateBitmap<ColorBgra32>(sourceBitmap.Size);
-            using IBitmapLock<ColorBgra32> workLock = workBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size), BitmapLockOptions.ReadWrite);
-            RegionPtr<ColorBgra32> workRegion = workLock.AsRegionPtr();
 
             RectInt32 outputBounds = output.Bounds;
             using IBitmapLock<ColorBgra32> outputLock = output.LockBgra32();
             RegionPtr<ColorBgra32> outputSubRegion = outputLock.AsRegionPtr();
             var outputRegion = outputSubRegion.OffsetView(-outputBounds.Location);
-            
-           // sourceRegion.CopyTo(workRegion);
+
             // Loop through the output canvas tile
             for (int y = outputBounds.Top; y < outputBounds.Bottom; ++y)
             {
@@ -185,12 +180,12 @@ namespace Dithering
                 {
                     // Get the workspace pixel
                     ColorBgra32 current = sourceRegion[x, y];
-                    ColorBgra32 transform = palette.FindClosestColor(current);
-                     algorithm?.Diffuse(sourceRegion, current, transform, x, y, outputBounds);
+                    ColorBgra32 transform = ChosenPalette.FindClosestColor(current);
+                    ChosenAlgorithm?.Diffuse(sourceRegion, current, transform, x, y, outputBounds);
                     // Save your pixel to the output canvas
                 }
             }
-            //workBitmap.CopyPixels<ColorBgra32>(outputRegion)
+            
         }
 
         

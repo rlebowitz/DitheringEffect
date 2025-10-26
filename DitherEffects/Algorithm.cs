@@ -1,3 +1,5 @@
+#nullable disable
+
 namespace Dithering
 {
     public class Algorithm(double[,] matrix, int matrixOffset)

@@ -6,6 +6,8 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
+#nullable disable
+
 using PaintDotNet;
 using PaintDotNet.Imaging;
 using PaintDotNet.Rendering;

@@ -1,4 +1,6 @@
-﻿using Dithering.Algorithms;
+﻿#nullable disable
+
+using Dithering.Algorithms;
 using Dithering.Palettes;
 using PaintDotNet;
 using PaintDotNet.Effects;
@@ -39,18 +41,20 @@ namespace Dithering
     }
 
     [PluginSupportInfo<DitheringEffectSupportInfo>(DisplayName = "Dithering Effect")]
-    public class DitheringEffectEffectPlugin : PropertyBasedBitmapEffect
+    public class DitheringEffectPlugin : PropertyBasedBitmapEffect
     {
         public static string StaticName => "Dithering Effect";
-        public static System.Drawing.Image StaticIcon => new System.Drawing.Bitmap(typeof(DitheringEffectEffectPlugin), "ErrorDiffusionDithering.png");
+        public static Image StaticIcon => new Bitmap(typeof(DitheringEffectPlugin), "ErrorDiffusionDithering.png");
         public static string SubmenuName => SubmenuNames.Photo;
 
-        public DitheringEffectEffectPlugin()
+        public DitheringEffectPlugin()
             : base(StaticName, StaticIcon, SubmenuName, BitmapEffectOptionsFactory.Create() with { IsConfigurable = true })
         {
         }
+
         private ErrorDiffusionDithering? ChosenAlgorithm { get; set; }
         private Palette? ChosenPalette { get; set; }
+        private bool HasInitialized { get; set; } = false;
         public enum PropertyNames
         {
             Algorithm,
@@ -127,6 +131,7 @@ namespace Dithering
 
         protected override void OnInitializeRenderInfo(IBitmapEffectRenderInfo renderInfo)
         {
+            
             base.OnInitializeRenderInfo(renderInfo);
         }
 
@@ -134,10 +139,7 @@ namespace Dithering
         {
             Algorithm = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.Algorithm).Value;
             PaletteType = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.PaletteType).Value;
-            ChosenAlgorithm = DitheringCollection.Ditherings[Algorithm];
-            ChosenPalette = PaletteCollection.Palettes[PaletteType];
-            ChosenPalette.Clear();
-
+            HasInitialized = true;
             base.OnSetToken(newToken);
         }
 
@@ -161,10 +163,24 @@ namespace Dithering
 
         protected override void OnRender(IBitmapEffectOutput output)
         {
+            if (!HasInitialized)
+            {
+                return;
+            }
+
+            ChosenAlgorithm = DitheringCollection.Ditherings[Algorithm];
+            ChosenPalette = PaletteCollection.Palettes[PaletteType];
+            ChosenPalette.Clear();
 
             using IEffectInputBitmap<ColorBgra32> sourceBitmap = Environment.GetSourceBitmapBgra32();
             using IBitmapLock<ColorBgra32> sourceLock = Environment.GetSourceBitmapBgra32().Lock(new RectInt32(0, 0, sourceBitmap.Size));
             RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
+
+            IImagingFactory factory = Services.GetService<IImagingFactory>();  // don't use Dispose on services
+            using IBitmap<ColorBgra32> workBitmap = factory.CreateBitmap<ColorBgra32>(sourceBitmap.Size);
+            using IBitmapLock<ColorBgra32> workLock = workBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size), BitmapLockOptions.ReadWrite);
+            RegionPtr<ColorBgra32> workRegion = workLock.AsRegionPtr();
+            sourceRegion.CopyTo(workRegion);
 
             RectInt32 outputBounds = output.Bounds;
             using IBitmapLock<ColorBgra32> outputLock = output.LockBgra32();
@@ -179,13 +195,13 @@ namespace Dithering
                 for (int x = outputBounds.Left; x < outputBounds.Right; ++x)
                 {
                     // Get the workspace pixel
-                    ColorBgra32 current = sourceRegion[x, y];
+                    ColorBgra32 current = workRegion[x, y];
                     ColorBgra32 transform = ChosenPalette.FindClosestColor(current);
-                    ChosenAlgorithm?.Diffuse(sourceRegion, current, transform, x, y, outputBounds);
+                    ChosenAlgorithm?.Diffuse(workRegion, current, transform, x, y, outputBounds);
                     // Save your pixel to the output canvas
+                    outputRegion[x, y] = transform;
                 }
             }
-            
         }
 
         

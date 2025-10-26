@@ -1,4 +1,6 @@
-﻿using PaintDotNet;
+﻿#nullable disable
+
+using PaintDotNet;
 using PaintDotNet.Imaging;
 namespace Dithering.Palettes
 {

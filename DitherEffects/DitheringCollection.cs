@@ -1,3 +1,5 @@
+#nullable disable
+
 using Dithering.Algorithms;
 using System.Linq.Expressions;
 

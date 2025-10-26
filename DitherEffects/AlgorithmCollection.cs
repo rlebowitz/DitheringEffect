@@ -1,3 +1,5 @@
+#nullable disable
+
 namespace Dithering
 {
     public static class AlgorithmCollection

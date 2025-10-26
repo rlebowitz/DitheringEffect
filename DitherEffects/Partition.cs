@@ -1,3 +1,5 @@
+#nullable disable
+
 namespace Dithering
 {
     public struct Partition

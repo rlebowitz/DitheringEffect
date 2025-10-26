@@ -1,3 +1,5 @@
+#nullable disable
+
 using Dithering.Palettes;
 
 namespace Dithering

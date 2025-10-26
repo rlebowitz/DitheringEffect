@@ -1,3 +1,5 @@
+#nullable disable
+
 using PaintDotNet.Rendering;
 using System.Runtime.CompilerServices;
 

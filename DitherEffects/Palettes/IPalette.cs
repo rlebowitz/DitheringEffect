@@ -1,3 +1,5 @@
+#nullable disable
+
 using PaintDotNet.Imaging;
 
 namespace Dithering.Palettes

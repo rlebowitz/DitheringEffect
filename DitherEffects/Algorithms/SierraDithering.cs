@@ -15,6 +15,8 @@
  *           2/32 3/32 2/32
  */
 
+#nullable disable
+
 using System.ComponentModel;
 
 namespace Dithering.Algorithms

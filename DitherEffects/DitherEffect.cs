@@ -52,8 +52,10 @@ namespace Dithering
         {
         }
 
+#nullable enable
         private ErrorDiffusionDithering? ChosenAlgorithm { get; set; }
         private Palette? ChosenPalette { get; set; }
+#nullable disable
         private bool HasInitialized { get; set; } = false;
         public enum PropertyNames
         {
@@ -131,7 +133,7 @@ namespace Dithering
 
         protected override void OnInitializeRenderInfo(IBitmapEffectRenderInfo renderInfo)
         {
-            
+            HasInitialized = true;
             base.OnInitializeRenderInfo(renderInfo);
         }
 
@@ -139,7 +141,6 @@ namespace Dithering
         {
             Algorithm = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.Algorithm).Value;
             PaletteType = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.PaletteType).Value;
-            HasInitialized = true;
             base.OnSetToken(newToken);
         }
 

@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 
 namespace Dithering
 {
+    //https://github.com/cyotek/Dithering/tree/master/src
     public static class DitheringCollection
     {
         public static readonly ErrorDiffusionDithering[] Ditherings =
@@ -13,7 +14,12 @@ namespace Dithering
                 new FloydSteinbergDithering(),
                 // Jarvis, Judice and Ninke
                 new JarvisJudiceNinkeDithering(),
-                // Stucki
+                // Fan
+                new FanDithering(),
+                // 4-cell Shiau-Fan
+                new FourCellShiauFanDithering(),
+                // 5-cell Shiau-Fan
+                new FiveCellShiauFanDithering(),
                 new StuckiDithering(),
                 // Burkes
                 new BurkesDithering(),

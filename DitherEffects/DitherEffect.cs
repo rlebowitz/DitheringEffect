@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using CheckboxControl = System.Boolean;
 using ListBoxControl = System.Byte;
 
 [assembly: AssemblyTitle("DitheringEffect plugin for Paint.NET")]
@@ -60,7 +61,8 @@ namespace Dithering
         public enum PropertyNames
         {
             Algorithm,
-            PaletteType
+            PaletteType,
+            RenderingMode
         }
 
         public enum AlgorithmOptions
@@ -72,7 +74,11 @@ namespace Dithering
             AlgorithmOption5,
             AlgorithmOption6,
             AlgorithmOption7,
-            AlgorithmOption8
+            AlgorithmOption8,
+            AlgorithmOption9,
+            AlgorithmOption10,
+            AlgorithmOption11
+
         }
 
         public enum PaletteTypeOptions
@@ -81,7 +87,10 @@ namespace Dithering
             PaletteTypeOption2,
             PaletteTypeOption3,
             PaletteTypeOption4,
-            PaletteTypeOption5
+            PaletteTypeOption5,
+            PaletteTypeOption6,
+            PaletteTypeOption7,
+            PaletteTypeOption8
         }
         protected override PropertyCollection OnCreatePropertyCollection()
         {
@@ -89,6 +98,7 @@ namespace Dithering
             [
                 StaticListChoiceProperty.CreateForEnum<AlgorithmOptions>(PropertyNames.Algorithm, 0, false),
                 StaticListChoiceProperty.CreateForEnum<PaletteTypeOptions>(PropertyNames.PaletteType, 0, false),
+                new BooleanProperty(PropertyNames.RenderingMode, false)
             ];
 
             return new PropertyCollection(props);
@@ -102,21 +112,30 @@ namespace Dithering
             PropertyControlInfo AlgorithmControl = configUI.FindControlForPropertyName(PropertyNames.Algorithm);
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption1, "Floyd-Steinberg");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption2, "Jarvis, Judice and Ninke");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption3, "Stucki");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption4, "Burkes");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption5, "Sierra");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption6, "Two-row Sierra");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption7, "Sierra Lite");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption8, "Atkinson");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption3, "Fan");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption4, "4-cell Shiau-Fan");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption5, "5-cell Shiau-Fan");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption6, "Stucki");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption7, "Burkes");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption8, "Sierra");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption9, "Two-row Sierra");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption10, "Sierra Lite");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption11, "Atkinson");
             configUI.SetPropertyControlValue(PropertyNames.Algorithm, ControlInfoPropertyNames.ShowHeaderLine, false);
             configUI.SetPropertyControlValue(PropertyNames.PaletteType, ControlInfoPropertyNames.DisplayName, "Palette");
             PropertyControlInfo PaletteTypeControl = configUI.FindControlForPropertyName(PropertyNames.PaletteType);
             PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption1, "Black and white 2-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption2, "Windows 16-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption3, "Windows 20-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption4, "Apple 16-color paletteApple 16-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption5, "RISC OS default 16-color palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption2, "Black,grey and white palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption3, "Black, grey, silver and white palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption4, "Windows 16-color palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption5, "Windows 20-color palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption6, "Apple 16-color paletteApple 16-color palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption7, "RISC OS default 16-color palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption8, "64-color palette");
             configUI.SetPropertyControlValue(PropertyNames.PaletteType, ControlInfoPropertyNames.ShowHeaderLine, false);
+            configUI.SetPropertyControlValue(PropertyNames.RenderingMode, ControlInfoPropertyNames.DisplayName, string.Empty);
+            configUI.SetPropertyControlValue(PropertyNames.RenderingMode, ControlInfoPropertyNames.Description, "Enable Rendering");
+            configUI.SetPropertyControlValue(PropertyNames.RenderingMode, ControlInfoPropertyNames.ShowHeaderLine, false);
 
             return configUI;
         }
@@ -133,7 +152,6 @@ namespace Dithering
 
         protected override void OnInitializeRenderInfo(IBitmapEffectRenderInfo renderInfo)
         {
-            HasInitialized = true;
             base.OnInitializeRenderInfo(renderInfo);
         }
 
@@ -141,6 +159,7 @@ namespace Dithering
         {
             Algorithm = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.Algorithm).Value;
             PaletteType = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.PaletteType).Value;
+            Render = newToken.GetProperty<BooleanProperty>(PropertyNames.RenderingMode).Value;
             base.OnSetToken(newToken);
         }
 
@@ -160,12 +179,31 @@ namespace Dithering
         #region UICode
         ListBoxControl Algorithm = 0; // Dithering Algorithm|Floyd-Steinberg|Jarvis, Judice and Ninke|Stucki|Burkes|Sierra|Two-row Sierra|Sierra Lite|Atkinson
         ListBoxControl PaletteType = 0; // Palette|Black and white 2-color palette|Windows 16-color palette|Windows 20-color palette|Apple 16-color paletteApple 16-color palette|RISC OS default 16-color palette
+        CheckboxControl Render = false; // Enable Rendering
         #endregion
 
         protected override void OnRender(IBitmapEffectOutput output)
         {
-            if (!HasInitialized)
+            using IEffectInputBitmap<ColorBgra32> sourceBitmap = Environment.GetSourceBitmapBgra32();
+            using IBitmapLock<ColorBgra32> sourceLock = Environment.GetSourceBitmapBgra32().Lock(new RectInt32(0, 0, sourceBitmap.Size));
+            RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
+
+            RectInt32 outputBounds = output.Bounds;
+            using IBitmapLock<ColorBgra32> outputLock = output.LockBgra32();
+            RegionPtr<ColorBgra32> outputSubRegion = outputLock.AsRegionPtr();
+            var outputRegion = outputSubRegion.OffsetView(-outputBounds.Location);
+
+            if (!Render)
             {
+                for (int y = outputBounds.Top; y < outputBounds.Bottom; ++y)
+                {
+                    if (IsCancelRequested) return;
+
+                    for (int x = outputBounds.Left; x < outputBounds.Right; ++x)
+                    {
+                        outputRegion[x, y] = sourceRegion[x, y];
+                    }
+                }
                 return;
             }
 
@@ -173,20 +211,12 @@ namespace Dithering
             ChosenPalette = PaletteCollection.Palettes[PaletteType];
             ChosenPalette.Clear();
 
-            using IEffectInputBitmap<ColorBgra32> sourceBitmap = Environment.GetSourceBitmapBgra32();
-            using IBitmapLock<ColorBgra32> sourceLock = Environment.GetSourceBitmapBgra32().Lock(new RectInt32(0, 0, sourceBitmap.Size));
-            RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
 
             IImagingFactory factory = Services.GetService<IImagingFactory>();  // don't use Dispose on services
             using IBitmap<ColorBgra32> workBitmap = factory.CreateBitmap<ColorBgra32>(sourceBitmap.Size);
             using IBitmapLock<ColorBgra32> workLock = workBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size), BitmapLockOptions.ReadWrite);
             RegionPtr<ColorBgra32> workRegion = workLock.AsRegionPtr();
             sourceRegion.CopyTo(workRegion);
-
-            RectInt32 outputBounds = output.Bounds;
-            using IBitmapLock<ColorBgra32> outputLock = output.LockBgra32();
-            RegionPtr<ColorBgra32> outputSubRegion = outputLock.AsRegionPtr();
-            var outputRegion = outputSubRegion.OffsetView(-outputBounds.Location);
 
             // Loop through the output canvas tile
             for (int y = outputBounds.Top; y < outputBounds.Bottom; ++y)

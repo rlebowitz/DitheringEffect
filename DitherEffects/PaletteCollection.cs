@@ -10,10 +10,13 @@ namespace Dithering
         public static readonly Palette[] Palettes =
         [
                 new BlackAndWhitePalette(),
+                new ThreeGrayPalette(),
+                new FourGrayPalette(),
                 new Windows16Palette(),
-                new Windows20Palette(),
                 new Apple16Palette(),
-                new RiscOSPalette()
+                new Windows20Palette(),
+                new RiscOSPalette(),
+                new SixtyFourPalette(),
             ];
     }
 }

@@ -218,6 +218,7 @@ namespace Dithering
             using IBitmap<ColorBgra32> workBitmap = factory.CreateBitmap<ColorBgra32>(sourceBitmap.Size);
             using IBitmapLock<ColorBgra32> workLock = workBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size), BitmapLockOptions.ReadWrite);
             RegionPtr<ColorBgra32> workRegion = workLock.AsRegionPtr();
+            
             sourceRegion.CopyTo(workRegion);
 
             // Loop through the output canvas tile

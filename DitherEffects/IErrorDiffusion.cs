@@ -6,19 +6,17 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
-#nullable disable
-
 using PaintDotNet;
 using PaintDotNet.Imaging;
 using PaintDotNet.Rendering;
 
-namespace Dithering.Algorithms
+namespace Dithering
 {
     public interface IErrorDiffusion
     {
         #region Methods
 
-        public void Diffuse(RegionPtr<ColorBgra32> data, ColorBgra32 original, ColorBgra32 transformed, int x, int y, RectInt32 bounds);
+        public void Diffuse(RegionPtr<ColorBgra32> data, ColorBgra32 original, int x, int y, RectInt32 bounds);
 
         public bool PreScan { get; }
 

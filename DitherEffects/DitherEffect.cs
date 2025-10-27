@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Security.Cryptography.Xml;
 using CheckboxControl = System.Boolean;
 using ListBoxControl = System.Byte;
 
@@ -218,10 +219,11 @@ namespace Dithering
             using IBitmap<ColorBgra32> workBitmap = factory.CreateBitmap<ColorBgra32>(sourceBitmap.Size);
             using IBitmapLock<ColorBgra32> workLock = workBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size), BitmapLockOptions.ReadWrite);
             RegionPtr<ColorBgra32> workRegion = workLock.AsRegionPtr();
-            
-            sourceRegion.CopyTo(workRegion);
+            //   workRegion.Fill(Color.White);
 
-            // Loop through the output canvas tile
+            sourceRegion.CopyTo(workRegion);
+            ColorBgra32 current = Color.Transparent;
+            // Alter the palette for the work region
             for (int y = outputBounds.Top; y < outputBounds.Bottom; ++y)
             {
                 if (IsCancelRequested) return;
@@ -229,16 +231,26 @@ namespace Dithering
                 for (int x = outputBounds.Left; x < outputBounds.Right; ++x)
                 {
                     // Get the workspace pixel
-                    ColorBgra32 current = workRegion[x, y];
-                    ColorBgra32 transform = ChosenPalette.FindClosestColor(current);
-                    ChosenAlgorithm?.Diffuse(workRegion, current, transform, x, y, outputBounds);
-                    // Save your pixel to the output canvas
-                    outputRegion[x, y] = transform;
+                    current = workRegion[x, y];
+                    workRegion[x, y] = ChosenPalette.FindClosestColor(workRegion[x, y]);
                 }
             }
+            // Dither the image
+            for (int y = outputBounds.Top; y < outputBounds.Bottom; ++y)
+            {
+                if (IsCancelRequested) return;
+
+                for (int x = outputBounds.Left; x < outputBounds.Right; ++x)
+                {
+                    ChosenAlgorithm?.Diffuse(workRegion, current, x, y, outputBounds);
+                    // Save your pixel to the output canvas
+                    outputRegion[x, y] = workRegion[x, y];
+                }
+            }
+
         }
 
-        
+
         #endregion
     }
 }

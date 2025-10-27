@@ -19,14 +19,10 @@ namespace Dithering.Algorithms
 
         public FloydSteinbergDithering()
           : base(new byte[,]
-                 {
                {
-                 0, 0, 7
-               },
-               {
-                 3, 5, 1
-               }
-                 }, 4, true)
+                    { 0, 0, 7 },
+                    { 3, 5, 1 }
+               }, 4, true)
         { }
 
         #endregion

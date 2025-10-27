@@ -1,30 +1,29 @@
-﻿#nullable disable
-
+﻿using System.Drawing;
 using PaintDotNet.Imaging;
 
 namespace Dithering.Palettes
 {
     public class Windows20Palette() : Palette([
-                    SrgbColors.Black,
-                    SrgbColors.Maroon,
-                    SrgbColors.Green,
-                    SrgbColors.Olive,
-                    SrgbColors.Navy,
-                    SrgbColors.Purple,
-                    SrgbColors.Teal,
-                    SrgbColors.Silver,
-                    ColorBgra32.FromBgra(192, 192, 192, 255),
-                    ColorBgra32.FromBgra(240, 240, 240, 255),
-                    ColorBgra32.FromBgra(240, 240, 240, 255),
-                    ColorBgra32.FromBgra(164, 164, 164, 255),
-                    SrgbColors.Gray,
-                    SrgbColors.Red,
-                    SrgbColors.Lime,
-                    SrgbColors.Yellow,
-                    SrgbColors.Blue,
-                    SrgbColors.Fuchsia,
-                    SrgbColors.Aqua,
-                    SrgbColors.White
+                    Color.Black,
+                    Color.Maroon,
+                    Color.Green,
+                    Color.Olive,
+                    Color.Navy,
+                    Color.Purple,
+                    Color.Teal,
+                    Color.Silver,
+                    Color.FromArgb(255,192, 192, 192),
+                    Color.FromArgb(255, 240, 240, 240),
+                    Color.FromArgb(255, 240, 240, 240),
+                    Color.FromArgb(255, 164, 164, 164),
+                    Color.Gray,
+                    Color.Red,
+                    Color.Lime,
+                    Color.Yellow,
+                    Color.Blue,
+                    Color.Fuchsia,
+                    Color.Aqua,
+                    Color.White
                 ])
     {
     }

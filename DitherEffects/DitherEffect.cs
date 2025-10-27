@@ -57,7 +57,6 @@ namespace Dithering
         private ErrorDiffusionDithering? ChosenAlgorithm { get; set; }
         private Palette? ChosenPalette { get; set; }
 #nullable disable
-        private bool HasInitialized { get; set; } = false;
         public enum PropertyNames
         {
             Algorithm,
@@ -69,9 +68,9 @@ namespace Dithering
         {
             AlgorithmOption1,
             AlgorithmOption2,
-            AlgorithmOption3,
-            AlgorithmOption4,
-            AlgorithmOption5,
+            //AlgorithmOption3,
+            //AlgorithmOption4,
+            //AlgorithmOption5,
             AlgorithmOption6,
             AlgorithmOption7,
             AlgorithmOption8,
@@ -112,9 +111,9 @@ namespace Dithering
             PropertyControlInfo AlgorithmControl = configUI.FindControlForPropertyName(PropertyNames.Algorithm);
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption1, "Floyd-Steinberg");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption2, "Jarvis, Judice and Ninke");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption3, "Fan");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption4, "4-cell Shiau-Fan");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption5, "5-cell Shiau-Fan");
+            //AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption3, "Fan");
+            //AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption4, "4-cell Shiau-Fan");
+            //AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption5, "5-cell Shiau-Fan");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption6, "Stucki");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption7, "Burkes");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption8, "Sierra");
@@ -128,8 +127,8 @@ namespace Dithering
             PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption2, "Black,grey and white palette");
             PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption3, "Black, grey, silver and white palette");
             PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption4, "Windows 16-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption5, "Windows 20-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption6, "Apple 16-color paletteApple 16-color palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption5, "Apple 16-color palette");
+            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption6, "Windows 20-color palette");
             PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption7, "RISC OS default 16-color palette");
             PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption8, "64-color palette");
             configUI.SetPropertyControlValue(PropertyNames.PaletteType, ControlInfoPropertyNames.ShowHeaderLine, false);
@@ -149,9 +148,14 @@ namespace Dithering
             props[ControlInfoPropertyNames.WindowHelpContent].Value = "Dithering Effects v1.0\nCopyright ©2025 by Robert J Lebowitz\nAll rights reserved.";
             base.OnCustomizeConfigUIWindowProperties(props);
         }
-
+        /// <summary>
+        /// Method is called only once per effect instance, before rendering starts.
+        /// </summary>
+        /// <param name="renderInfo"></param>
         protected override void OnInitializeRenderInfo(IBitmapEffectRenderInfo renderInfo)
         {
+            //https://forums.getpaint.net/topic/134083-bitmap-effect-how-to-call-blur/#comment-647850
+            renderInfo.Schedule = BitmapEffectRenderingSchedule.None;
             base.OnInitializeRenderInfo(renderInfo);
         }
 
@@ -159,6 +163,9 @@ namespace Dithering
         {
             Algorithm = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.Algorithm).Value;
             PaletteType = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.PaletteType).Value;
+            ChosenAlgorithm = DitheringCollection.Ditherings[Algorithm];
+            ChosenPalette = PaletteCollection.Palettes[PaletteType];
+            ChosenPalette.Clear();
             Render = newToken.GetProperty<BooleanProperty>(PropertyNames.RenderingMode).Value;
             base.OnSetToken(newToken);
         }
@@ -206,11 +213,6 @@ namespace Dithering
                 }
                 return;
             }
-
-            ChosenAlgorithm = DitheringCollection.Ditherings[Algorithm];
-            ChosenPalette = PaletteCollection.Palettes[PaletteType];
-            ChosenPalette.Clear();
-
 
             IImagingFactory factory = Services.GetService<IImagingFactory>();  // don't use Dispose on services
             using IBitmap<ColorBgra32> workBitmap = factory.CreateBitmap<ColorBgra32>(sourceBitmap.Size);

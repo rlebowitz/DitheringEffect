@@ -14,12 +14,12 @@ namespace Dithering
                 new FloydSteinbergDithering(),
                 // Jarvis, Judice and Ninke
                 new JarvisJudiceNinkeDithering(),
-                // Fan
-                new FanDithering(),
-                // 4-cell Shiau-Fan
-                new FourCellShiauFanDithering(),
-                // 5-cell Shiau-Fan
-                new FiveCellShiauFanDithering(),
+                //// Fan
+                //new FanDithering(),
+                //// 4-cell Shiau-Fan
+                //new FourCellShiauFanDithering(),
+                //// 5-cell Shiau-Fan
+                //new FiveCellShiauFanDithering(),
                 new StuckiDithering(),
                 // Burkes
                 new BurkesDithering(),

@@ -1,5 +1,3 @@
-#nullable disable
-
 using PaintDotNet.Imaging;
 using System.Collections.Generic;
 

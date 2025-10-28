@@ -15,8 +15,6 @@
  *      1/42 2/42 4/42 2/42 1/42
  */
 
-#nullable disable
-
 using System.ComponentModel;
 
 namespace Dithering.Algorithms
@@ -27,18 +25,12 @@ namespace Dithering.Algorithms
         #region Constructors
 
         public StuckiDithering()
-          : base(new byte[,]
+          : base(new float[,]
                  {
-               {
-                 0, 0, 0, 8, 4
-               },
-               {
-                 2, 4, 8, 4, 2
-               },
-               {
-                 1, 2, 4, 2, 1
-               }
-                 }, 42, false)
+               { 0, 0, 0, 8.0f/42.0f, 4.0f/42.0f },
+               { 2.0f/42.0f, 4.0f/42.0f, 8.0f/42.0f, 4.0f/42.0f, 2.0f/42.0f },
+               { 1.0f/42.0f, 2.0f/42.0f, 4.0f/42.0f, 2.0f/42.0f, 1.0f/42.0f }
+                 })
         { }
 
         #endregion

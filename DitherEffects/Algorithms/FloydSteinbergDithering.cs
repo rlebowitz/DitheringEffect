@@ -6,8 +6,6 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
-#nullable disable
-
 using System.ComponentModel;
 
 namespace Dithering.Algorithms
@@ -18,11 +16,11 @@ namespace Dithering.Algorithms
         #region Constructors
 
         public FloydSteinbergDithering()
-          : base(new byte[,]
+          : base(new float[,]
                {
-                    { 0, 0, 7 },
-                    { 3, 5, 1 }
-               }, 4, true)
+                    { 0, 0, 7.0f/16.0f },
+                    { 3.0f/16.0f, 5.0f/16.0f, 1.0f/16.0f }
+               })
         { }
 
         #endregion

@@ -1,6 +1,5 @@
 ﻿#nullable disable
-
-using Dithering.Algorithms;
+using Dithering;
 using Dithering.Palettes;
 using PaintDotNet;
 using PaintDotNet.Effects;
@@ -54,9 +53,10 @@ namespace Dithering
         {
         }
 
-#nullable enable
         private ErrorDiffusionDithering? ChosenAlgorithm { get; set; }
+#nullable enable
         private Palette? ChosenPalette { get; set; }
+        private LuminescenceWeights LuminescenceWeights { get; set; } = new();
 #nullable disable
         public enum PropertyNames
         {
@@ -168,6 +168,7 @@ namespace Dithering
             ChosenPalette = PaletteCollection.Palettes[PaletteType];
             ChosenPalette.Clear();
             Render = newToken.GetProperty<BooleanProperty>(PropertyNames.RenderingMode).Value;
+            // add Luminescence weights to the palette
             base.OnSetToken(newToken);
         }
 
@@ -215,15 +216,10 @@ namespace Dithering
                 return;
             }
 
-            IImagingFactory factory = Services.GetService<IImagingFactory>();  // don't use Dispose on services
-            using IBitmap<ColorBgra32> workBitmap = factory.CreateBitmap<ColorBgra32>(sourceBitmap.Size);
-            using IBitmapLock<ColorBgra32> workLock = workBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size), BitmapLockOptions.ReadWrite);
-            RegionPtr<ColorBgra32> workRegion = workLock.AsRegionPtr();
-            //   workRegion.Fill(Color.White);
+            // workspace
+            float[,] gray = new float[sourceBitmap.Size.Width, sourceBitmap.Size.Height];
 
-            sourceRegion.CopyTo(workRegion);
-            ColorBgra32 current = Color.Transparent;
-            // Alter the palette for the work region
+            // Quantize
             for (int y = outputBounds.Top; y < outputBounds.Bottom; ++y)
             {
                 if (IsCancelRequested) return;
@@ -231,8 +227,7 @@ namespace Dithering
                 for (int x = outputBounds.Left; x < outputBounds.Right; ++x)
                 {
                     // Get the workspace pixel
-                    current = workRegion[x, y];
-                    workRegion[x, y] = ChosenPalette.FindClosestColor(workRegion[x, y]);
+                   gray[x, y] = sourceRegion[x, y].ToGray(LuminescenceWeights);  
                 }
             }
             // Dither the image
@@ -242,9 +237,9 @@ namespace Dithering
 
                 for (int x = outputBounds.Left; x < outputBounds.Right; ++x)
                 {
-                    ChosenAlgorithm?.Diffuse(workRegion, current, x, y, outputBounds);
-                    // Save your pixel to the output canvas
-                    outputRegion[x, y] = workRegion[x, y];
+                    ChosenAlgorithm?.Diffuse(gray, x, y, outputBounds);
+                    // Save the value to the output canvas
+                    outputRegion[x, y] = gray[x, y].ToColorBgra32(128.0f);
                 }
             }
 

@@ -26,15 +26,11 @@ namespace Dithering.Algorithms
         #region Constructors
 
         public BurkesDithering()
-          : base(new byte[,]
+          : base(new float[,]
                  {
-               {
-                 0, 0, 0, 8, 4
-               },
-               {
-                 2, 4, 8, 4, 2
-               }
-                 }, 5, true)
+                    {0, 0, 0, 8.0f/32.0f, 4.0f/32.0f},
+                    {2.0f/32f, 4.0f/32.0f, 8.0f/32.0f, 4.0f/32.0f, 2.0f/32.0f}
+                 })
         { }
 
         #endregion

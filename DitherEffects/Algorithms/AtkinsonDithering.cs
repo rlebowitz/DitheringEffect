@@ -15,8 +15,6 @@
  *          1/8
  */
 
-#nullable disable
-
 using System.ComponentModel;
 
 namespace Dithering.Algorithms
@@ -27,18 +25,18 @@ namespace Dithering.Algorithms
         #region Constructors
 
         public AtkinsonDithering()
-          : base(new byte[,]
+          : base(new float[,]
                  {
                {
-                 0, 0, 1, 1
+                 0, 0, 1.0f/8.0f, 1.0f/8.0f
                },
                {
-                 1, 1, 1, 0
+                 1.0f/8.0f, 1.0f / 8.0f, 1.0f / 8.0f, 0
                },
                {
-                 0, 1, 0, 0
+                 0, 1.0f / 8.0f, 0, 0
                }
-                 }, 3, true)
+                 })
         { }
 
         #endregion

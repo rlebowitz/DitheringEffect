@@ -15,8 +15,6 @@
  *      1/48 3/48 5/48 3/48 1/48
  */
 
-#nullable disable
-
 using System.ComponentModel;
 
 namespace Dithering.Algorithms
@@ -27,18 +25,12 @@ namespace Dithering.Algorithms
         #region Constructors
 
         public JarvisJudiceNinkeDithering()
-          : base(new byte[,]
+          : base(new float[,]
                  {
-               {
-                 0, 0, 0, 7, 5
-               },
-               {
-                 3, 5, 7, 5, 3
-               },
-               {
-                 1, 3, 5, 3, 1
-               }
-                 }, 48, false)
+               { 0, 0, 0, 7.0f/48.0f, 5.0f/48.0f },
+               { 3.0f/48.0f, 5.0f/48.0f, 7.0f/48.0f, 5.0f/48.0f, 3.0f/48.0f },
+               { 1.0f/48.0f, 3.0f/48.0f, 5.0f/48.0f, 3.0f/48.0f, 1.0f/48.0f }
+                 })
         { }
 
         #endregion

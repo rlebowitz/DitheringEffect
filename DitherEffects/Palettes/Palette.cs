@@ -14,6 +14,8 @@ namespace Dithering.Palettes
                 Cache.Clear();
             }
         }
+
+
         public ColorBgra32 FindClosestColor(ColorBgra32 color)
         {
             lock (Cache)

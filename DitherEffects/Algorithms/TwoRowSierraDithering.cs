@@ -16,6 +16,7 @@
 
 #nullable disable
 
+using Dithering;
 using System.ComponentModel;
 
 namespace Dithering.Algorithms
@@ -26,15 +27,11 @@ namespace Dithering.Algorithms
         #region Constructors
 
         public TwoRowSierraDithering()
-          : base(new byte[,]
+          : base(new float[,]
                  {
-               {
-                 0, 0, 0, 4, 3
-               },
-               {
-                 1, 2, 3, 2, 1
-               }
-                 }, 4, true)
+               { 0, 0, 0, 4.0f/16.0f, 3.0f/16.0f },
+               { 1.0f/16.0f, 2.0f/16.0f, 3.0f/16.0f, 2.0f/16.0f, 1.0f/16.0f }
+                 })
         { }
 
         #endregion

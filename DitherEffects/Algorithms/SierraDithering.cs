@@ -15,8 +15,6 @@
  *           2/32 3/32 2/32
  */
 
-#nullable disable
-
 using System.ComponentModel;
 
 namespace Dithering.Algorithms
@@ -27,18 +25,12 @@ namespace Dithering.Algorithms
         #region Constructors
 
         public SierraDithering()
-          : base(new byte[,]
+          : base(new float[,]
                  {
-               {
-                 0, 0, 0, 5, 3
-               },
-               {
-                 2, 4, 5, 4, 2
-               },
-               {
-                 0, 2, 3, 2, 0
-               }
-                 }, 5, true)
+               { 0, 0, 0, 5.0f/32.0f, 3.0f/32.0f },
+               { 2.0f/32.0f, 4.0f/32.0f, 5.0f/32.0f, 4.0f/32.0f, 2.0f/32.0f },
+               { 0, 2.0f/32.0f, 3.0f/32.0f, 2.0f/32.0f, 0 }
+                 })
         { }
 
         #endregion

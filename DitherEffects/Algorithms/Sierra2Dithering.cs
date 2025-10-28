@@ -7,31 +7,28 @@
  */
 
 /*
- * Two Row Sierra Dithering
+ * Sierra Dithering
  * http://www.efg2.com/Lab/Library/ImageProcessing/DHALF.TXT
  *
- *                  *  4/16 3/16
+  *                  *  4/16 3/16
  *      1/16 2/16 3/16 2/16 1/16
  */
 
-#nullable disable
-
-using Dithering;
 using System.ComponentModel;
 
 namespace Dithering.Algorithms
 {
-    [Description("Two-Row Sierra")]
-    public sealed class TwoRowSierraDithering : ErrorDiffusionDithering
+    [Description("Sierra2")]
+    public sealed class Sierra2Dithering : ErrorDiffusionDithering
     {
         #region Constructors
 
-        public TwoRowSierraDithering()
+        public Sierra2Dithering()
           : base(new float[,]
-                 {
-               { 0, 0, 0, 4.0f/16.0f, 3.0f/16.0f },
+             {
+               { 0.0f/16.0f, 0.0f/16.0f, 0.0f/16.0f, 4.0f/16.0f, 3.0f/16.0f },
                { 1.0f/16.0f, 2.0f/16.0f, 3.0f/16.0f, 2.0f/16.0f, 1.0f/16.0f }
-                 })
+             })
         { }
 
         #endregion

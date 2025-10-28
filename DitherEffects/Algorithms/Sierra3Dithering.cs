@@ -19,12 +19,12 @@ using System.ComponentModel;
 
 namespace Dithering.Algorithms
 {
-    [Description("Sierra")]
-    public sealed class SierraDithering : ErrorDiffusionDithering
+    [Description("Sierra3")]
+    public sealed class Sierra3Dithering : ErrorDiffusionDithering
     {
         #region Constructors
 
-        public SierraDithering()
+        public Sierra3Dithering()
           : base(new float[,]
                  {
                { 0, 0, 0, 5.0f/32.0f, 3.0f/32.0f },

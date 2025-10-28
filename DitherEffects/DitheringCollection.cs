@@ -15,23 +15,22 @@ namespace Dithering
                 new FloydSteinbergDithering(),
                 // Jarvis, Judice and Ninke
                 new JarvisJudiceNinkeDithering(),
-                //// Fan
-                //new FanDithering(),
-                //// 4-cell Shiau-Fan
-                //new FourCellShiauFanDithering(),
-                //// 5-cell Shiau-Fan
-                //new FiveCellShiauFanDithering(),
+                // Atkinson
+                new AtkinsonDithering(),
+                // 4-cell Shiau-Fan
+                new FourCellShiauFanDithering(),
+                // 5-cell Shiau-Fan
+                new FiveCellShiauFanDithering(),
+                // Stucki
                 new StuckiDithering(),
                 // Burkes
                 new BurkesDithering(),
                 // Sierra
-                new SierraDithering(),
-                // Two-row Sierra
-                new TwoRowSierraDithering(),
+                new Sierra2Dithering(),
+                // Three-row Sierra
+                new Sierra3Dithering(),
                 // Sierra Lite
                 new SierraLiteDithering(),
-                // Atkinson
-                new AtkinsonDithering()
             };
     }
 }

@@ -1,6 +1,4 @@
 ﻿#nullable disable
-using Dithering;
-using Dithering.Palettes;
 using PaintDotNet;
 using PaintDotNet.Effects;
 using PaintDotNet.Imaging;
@@ -13,7 +11,6 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Security.Cryptography.Xml;
 using CheckboxControl = System.Boolean;
 using ListBoxControl = System.Byte;
 
@@ -55,13 +52,13 @@ namespace Dithering
 
         private ErrorDiffusionDithering? ChosenAlgorithm { get; set; }
 #nullable enable
-        private Palette? ChosenPalette { get; set; }
+ //       private Palette? ChosenPalette { get; set; }
         private LuminescenceWeights LuminescenceWeights { get; set; } = new();
 #nullable disable
         public enum PropertyNames
         {
             Algorithm,
-            PaletteType,
+           // PaletteType,
             RenderingMode
         }
 
@@ -69,35 +66,34 @@ namespace Dithering
         {
             AlgorithmOption1,
             AlgorithmOption2,
-            //AlgorithmOption3,
-            //AlgorithmOption4,
-            //AlgorithmOption5,
+            AlgorithmOption3,
+            AlgorithmOption4,
+            AlgorithmOption5,
             AlgorithmOption6,
             AlgorithmOption7,
             AlgorithmOption8,
             AlgorithmOption9,
-            AlgorithmOption10,
-            AlgorithmOption11
+            AlgorithmOption10
 
         }
 
-        public enum PaletteTypeOptions
-        {
-            PaletteTypeOption1,
-            PaletteTypeOption2,
-            PaletteTypeOption3,
-            PaletteTypeOption4,
-            PaletteTypeOption5,
-            PaletteTypeOption6,
-            PaletteTypeOption7,
-            PaletteTypeOption8
-        }
+        //public enum PaletteTypeOptions
+        //{
+        //    PaletteTypeOption1,
+        //    PaletteTypeOption2,
+        //    PaletteTypeOption3,
+        //    PaletteTypeOption4,
+        //    PaletteTypeOption5,
+        //    PaletteTypeOption6,
+        //    PaletteTypeOption7,
+        //    PaletteTypeOption8
+        //}
         protected override PropertyCollection OnCreatePropertyCollection()
         {
             List<Property> props =
             [
                 StaticListChoiceProperty.CreateForEnum<AlgorithmOptions>(PropertyNames.Algorithm, 0, false),
-                StaticListChoiceProperty.CreateForEnum<PaletteTypeOptions>(PropertyNames.PaletteType, 0, false),
+           //     StaticListChoiceProperty.CreateForEnum<PaletteTypeOptions>(PropertyNames.PaletteType, 0, false),
                 new BooleanProperty(PropertyNames.RenderingMode, false)
             ];
 
@@ -112,27 +108,26 @@ namespace Dithering
             PropertyControlInfo AlgorithmControl = configUI.FindControlForPropertyName(PropertyNames.Algorithm);
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption1, "Floyd-Steinberg");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption2, "Jarvis, Judice and Ninke");
-            //AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption3, "Fan");
-            //AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption4, "4-cell Shiau-Fan");
-            //AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption5, "5-cell Shiau-Fan");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption3, "Atkinson");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption4, "4-cell Shiau-Fan");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption5, "5-cell Shiau-Fan");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption6, "Stucki");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption7, "Burkes");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption8, "Sierra");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption9, "Two-row Sierra");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption8, "Sierra 2 Row");
+            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption9, "Sierra 3 Row");
             AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption10, "Sierra Lite");
-            AlgorithmControl.SetValueDisplayName(AlgorithmOptions.AlgorithmOption11, "Atkinson");
             configUI.SetPropertyControlValue(PropertyNames.Algorithm, ControlInfoPropertyNames.ShowHeaderLine, false);
-            configUI.SetPropertyControlValue(PropertyNames.PaletteType, ControlInfoPropertyNames.DisplayName, "Palette");
-            PropertyControlInfo PaletteTypeControl = configUI.FindControlForPropertyName(PropertyNames.PaletteType);
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption1, "Black and white 2-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption2, "Black,grey and white palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption3, "Black, grey, silver and white palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption4, "Windows 16-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption5, "Apple 16-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption6, "Windows 20-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption7, "RISC OS default 16-color palette");
-            PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption8, "64-color palette");
-            configUI.SetPropertyControlValue(PropertyNames.PaletteType, ControlInfoPropertyNames.ShowHeaderLine, false);
+            //configUI.SetPropertyControlValue(PropertyNames.PaletteType, ControlInfoPropertyNames.DisplayName, "Palette");
+            //PropertyControlInfo PaletteTypeControl = configUI.FindControlForPropertyName(PropertyNames.PaletteType);
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption1, "Black and white 2-color palette");
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption2, "Black,grey and white palette");
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption3, "Black, grey, silver and white palette");
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption4, "Windows 16-color palette");
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption5, "Apple 16-color palette");
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption6, "Windows 20-color palette");
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption7, "RISC OS default 16-color palette");
+            //PaletteTypeControl.SetValueDisplayName(PaletteTypeOptions.PaletteTypeOption8, "64-color palette");
+            //configUI.SetPropertyControlValue(PropertyNames.PaletteType, ControlInfoPropertyNames.ShowHeaderLine, false);
             configUI.SetPropertyControlValue(PropertyNames.RenderingMode, ControlInfoPropertyNames.DisplayName, string.Empty);
             configUI.SetPropertyControlValue(PropertyNames.RenderingMode, ControlInfoPropertyNames.Description, "Enable Rendering");
             configUI.SetPropertyControlValue(PropertyNames.RenderingMode, ControlInfoPropertyNames.ShowHeaderLine, false);
@@ -163,10 +158,10 @@ namespace Dithering
         protected override void OnSetToken(PropertyBasedEffectConfigToken newToken)
         {
             Algorithm = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.Algorithm).Value;
-            PaletteType = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.PaletteType).Value;
+          //  PaletteType = (byte)(int)newToken.GetProperty<StaticListChoiceProperty>(PropertyNames.PaletteType).Value;
             ChosenAlgorithm = DitheringCollection.Ditherings[Algorithm];
-            ChosenPalette = PaletteCollection.Palettes[PaletteType];
-            ChosenPalette.Clear();
+            //ChosenPalette = PaletteCollection.Palettes[PaletteType];
+            //ChosenPalette.Clear();
             Render = newToken.GetProperty<BooleanProperty>(PropertyNames.RenderingMode).Value;
             // add Luminescence weights to the palette
             base.OnSetToken(newToken);
